@@ -13,21 +13,28 @@ mongoose.connect(mongoURI, {
 const morgan = require('morgan');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-
+const notFound = require('./middleware/404');
+const errorHandler = require('./middleware/500');
 //router imports
+const userRouter = require('./routers/user.router');
 const puzzleRouter = require('./routers/puzzle.router');
 //use middleware
 server.use(cors());
 server.use(morgan('dev'));
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({extended: true}));
+// passport import and configurations
 
-//use routers
+const passport = require('passport');
+const localStrategyConfig = require('./config/password');
+passport.use(localStrategyConfig);
+server.use(passport.initialize());
+// routers
+server.use(userRouter);
 server.use(puzzleRouter);
 
-server.get('/', (req, res) => {
-  res.send('it works');
-});
+server.use(notFound);
+server.use(errorHandler);
 
 server.listen(port, () => {
   console.log(`Now listening on port ${port}`);

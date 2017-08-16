@@ -2,9 +2,10 @@
 const express = require('express');
 const router = express.Router();
 const Puzzle = require('../models/puzzle.model');
+const auth = require('../middleware/auth');
 
 router.get('/puzzles', (req, res) => {
-  Puzzle.find({}, function (err, puzzles) {
+  Puzzle.findOneRandom({}, function (err, puzzles) {
     if(err) return res.status(500).json({err: err});
     return res.status(200).json({
       puzzles: puzzles
@@ -22,7 +23,20 @@ router.get('/puzzles/:puzzleId', (req, res) => {
 });
 
 router.post('/puzzles', (req, res) => {
-  const puzzle = new Puzzle(req.body);
+  if(!req.payload){
+    return res.status(403)
+              .json({
+      msg: 'Must be logged in.'
+    });
+  }
+  const {fen, solution} = req.body;
+  const{_id} = req.payload;
+  const data = {
+    fen,
+    solution,
+    user: _id
+  };
+  const puzzle = new Puzzle(data);
   puzzle.save(function (err, puzzle) {
     if(err) return res.status(500).json({err: err});
     return res.status(201).json({
@@ -32,6 +46,11 @@ router.post('/puzzles', (req, res) => {
 });
 
 router.delete('/puzzles/:puzzleId', (req, res) => {
+  if(!req.payload){
+    return res.status(403).json({
+      msg: 'Must be logged in.'
+    });
+  }
   Puzzle.findOneAndRemove({_id: req.params.puzzleId}, function (err) {
     if (err) return res.status(500).json({err: err});
     return res.status(200).json({
