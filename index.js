@@ -26,7 +26,7 @@ server.use(bodyParser.urlencoded({extended: true}));
 // passport import and configurations
 
 const passport = require('passport');
-const localStrategyConfig = require('./config/password');
+const localStrategyConfig = require('./config/passport');
 passport.use(localStrategyConfig);
 server.use(passport.initialize());
 // routers

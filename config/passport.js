@@ -4,7 +4,7 @@ const User = require('../models/user.model');
 
 const UserAuthHandler = (username, password, done) => {
 
-  User.findOne({email: username}, function (err, user) {
+  User.findOne({username: username}, function (err, user) {
     if(err) return done(err);
 
     if(!user) {
@@ -21,7 +21,7 @@ const UserAuthHandler = (username, password, done) => {
   });
 };
 
-const UserAuthConfig = {usernameField: 'email'};
+const UserAuthConfig = {usernameField: 'username'};
 
 const strategy = new LocalStrategy(UserAuthConfig, UserAuthHandler);
 

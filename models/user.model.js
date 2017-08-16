@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const signature = process.env.SIGNATURE || require('../secrets').SIGNATURE;
 
 const userSchema = new Schema({
-  email: {
+  username: {
     required: true,
     type: String,
     unique: true
@@ -39,7 +39,7 @@ userSchema.methods.generateJwt = function generateJwt() {
 
   return jwt.sign({
     _id: this._id,
-    email: this.email,
+    username: this.username,
     expiration: expiration.getTime()
   }, signature);
 };
