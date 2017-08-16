@@ -5,7 +5,7 @@ const usernameOrPasswordMessage = {
 };
 const passportAuth = (req, res, next) => {
 
-  passport.authentication('local', (err, user, info) => {
+  passport.authenticate('local', (err, user, info) => {
     if(err) return next(err);
 
     if(!user) {
